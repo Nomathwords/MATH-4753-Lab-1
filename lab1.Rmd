@@ -1,0 +1,212 @@
+---
+title: "Lab1"
+author: "Hunter DeVoe"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(pacman, tidyverse)
+```
+
+# Tasks
+
+## Task 1
+
+Obtain the current working directory:
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+```{r}
+# Read the DDT data into a dataframe and print the first 6 lines
+ddt <- read.csv("DDT-1.csv", header = TRUE)
+head(ddt, 6)
+```
+
+## Task 3  
+
+* What are the qualitative variables in “ddt”?  
+
+The qualitative variables in the DDT data file are River and Species  
+
+* What are the quantitative variables in “ddt”?  
+
+The quantitative variables in the DDT data file are Mile, Length, Weight, and DDT  
+
+* How many SPECIES are in the ddt data set?  
+
+There are three species in the DDT data file: CCATFISH, SMBUFFALO, and LMBASS  
+
+* Subset the ddt data set so that we see only the observations with SPECIES, LMBASS and WEIGHT bigger than 800gms
+
+```{r}
+subset(ddt, SPECIES == "LMBASS" & WEIGHT > 800)
+```
+
+* Subset the ddt data set so that we see only those observations where the RIVER is SCM   and DDT bigger than 4.0 
+
+```{r}
+subset_df <- NULL
+subset_df <- subset(ddt, RIVER == "SCM" & DDT > 4.0)
+subset_df
+```
+
+### Clicker Questions  
+
+1. Find the mean length of fish in the ddt data frame  
+
+```{r}
+mean(ddt$LENGTH)
+```
+
+2. What is the standard deviation of the weight of fish in the ddt data frame?  
+
+```{r}
+sd(ddt$WEIGHT)
+```
+
+3. Is this the plot of LENGTH vs WEIGHT from the ddt data frame?  
+
+No, the axes need to be swapped 
+
+4. If v = 1:20 what is the last value of v/20?  
+
+```{r}
+v = 1:20
+v / 20
+```
+
+So, the last value of v/20 is 1.00
+
+## Task 4
+
+* Make a table of the rivers
+```{r}
+table(ddt$RIVER)
+```
+
+* Make a color coded barplot of the rivers
+```{r}
+ggplot(ddt, aes(x = RIVER, fill = RIVER)) + geom_bar() + scale_fill_manual(values = c("#99CCCC", "#6699FF", "#0099FF", "#00CCFF"))
+```
+
+
+* Make a table of the rivers crossed with the species of fish  
+```{r}
+table(ddt$RIVER, ddt$SPECIES)
+```
+
+
+* Make a barplot of the rivers crossed with the species of fish  
+```{r}
+ggplot(ddt, aes(x = RIVER)) + geom_bar(aes(fill = SPECIES), position = "dodge")
+```
+
+## Task 5  
+
+* Make a pie chart of Fish SPECIES
+
+```{r}
+pie(table(ddt$SPECIES), col = rainbow(3))
+```
+
+* Make a pie chart of RIVERS
+
+```{r}
+pie(table(ddt$RIVER), col = rainbow(4))
+```
+
+## Task 6  
+
+* Make a boxplot of the variable DDT
+
+```{r}
+ggplot(data = ddt, aes(y = DDT)) + geom_boxplot(color = "blue", fill = "cyan3")
+```
+
+The box plot above includes all of the given data, but we can clearly see a few outliers affecting how the plot looks. I decided to remove the points that are greater than 150. After removing the major outliers, a more comprehensible box plot is produced. Of course, one should be more wary when discarding outliers, but removing them here helps to see the plot a bit better.
+
+```{r}
+ddtfiltered <- subset(ddt, DDT <= 150)
+ggplot(data = ddtfiltered, aes(y = DDT)) + geom_boxplot(color = "blue", fill = "cyan3")
+```
+
+* Make a boxplot of the variable WEIGHT (in grams)
+
+```{r}
+ggplot(data = ddt, aes(y = WEIGHT)) + geom_boxplot(color = "navy", fill = "mediumorchid3")
+```
+
+Fortunately for this data set, the outliers do not significantly affect how the plot is generated
+
+* Make a boxplot of the variable LENGTH (in centimeters)
+
+```{r}
+ggplot(data = ddt, aes(y = LENGTH)) + geom_boxplot(color = "black", fill = "firebrick2")
+```
+
+## Task 7
+
+*	Make a coplot of LENGTH Vs WEIGHT given RIVER
+
+```{r}
+coplot(WEIGHT ~ LENGTH|RIVER, data = ddt, col = "midnightblue")
+```
+
+* Make a coplot of DDT Vs WEIGHT given SPECIES
+
+```{r}
+coplot(WEIGHT ~ DDT|SPECIES, data = ddt, col = "darkgreen")
+```
+
+## Task 8  
+
+* Use ggplot and make the following boxplots (be sure to put your name on the title using ggtitle())  
+
+Plot 1
+
+```{r}
+ggplot(data = ddt, aes(x = SPECIES, y = WEIGHT)) + geom_boxplot() + aes(fill = RIVER) + ggtitle("Hunter DeVoe")
+```
+
+* Use ggplot and make the following violin plots (name on the title)  
+
+Plot 2
+
+```{r}
+ggplot(data = ddt, aes(x = RIVER, y = LENGTH)) + geom_violin() + aes(fill = SPECIES) + ggtitle("Hunter DeVoe")
+```
+
+*	Use ggplot and make the following scatter plots (name on the title)  
+
+Plot 3
+
+```{r}
+ggplot(ddt, aes(x=WEIGHT, y=LENGTH, fill = SPECIES, col = SPECIES)) + geom_point() + ggtitle("Hunter DeVoe")
+```
+
+```{r}
+# CLEAN UP #################################################
+
+# Clear environment
+rm(list = ls()) 
+
+# Clear packages
+p_unload(all)  # Remove all add-ons
+
+# Clear plots
+dev.off()  # But only if there IS a plot
+
+# Clear console
+cat("\014")  # ctrl+L
+
+# Clear mind :)
+```
